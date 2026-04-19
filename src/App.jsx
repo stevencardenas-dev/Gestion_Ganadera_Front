@@ -5,7 +5,7 @@ import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
-    <Router>
+    <Router basename="/Gestion_Ganadera_Frontend">
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
