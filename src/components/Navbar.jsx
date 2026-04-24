@@ -19,7 +19,7 @@ const Navbar = () => {
           </svg>
           <input 
             type="text" 
-            placeholder="Buscar ganado, lote..." 
+            placeholder="Buscar animales, lote..." 
             className="bg-dark-800 border border-dark-600 rounded-full pl-9 pr-4 py-1.5 text-sm text-gray-200 focus:border-brand-600 focus:ring-1 focus:ring-brand-600/50 outline-none w-64 transition-all"
           />
         </div>

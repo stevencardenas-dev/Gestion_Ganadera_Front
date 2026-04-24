@@ -60,7 +60,7 @@ export default function Dashboard() {
         <div className="stat-card animate-fade-up-d1">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-gray-400 text-sm font-medium mb-1">Total Ganado</p>
+              <p className="text-gray-400 text-sm font-medium mb-1">Total Animales</p>
               <h3 className="text-3xl font-bold text-gray-100">200<span className="text-lg font-normal text-gray-500 ml-1">cabezas</span></h3>
             </div>
             <div className="p-2.5 bg-brand-900/50 rounded-lg border border-brand-800">
