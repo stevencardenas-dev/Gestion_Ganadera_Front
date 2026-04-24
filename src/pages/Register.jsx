@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import authService from '../services/authService';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -7,15 +8,28 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
+  const [error, setError] = useState('');
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
+    setError(''); // Clear previous errors
+
     if (password !== confirmPassword) {
-      alert("Las contraseñas no coinciden");
+      setError("Las contraseñas no coinciden");
       return;
     }
-    // Simulate API registration success
-    navigate('/login');
+    
+    try {
+      // Llamada real a registro (el backend espera 'nombre')
+      await authService.register({ nombre: name, email, password });
+      
+      // Auto login después del registro
+      await authService.login({ email, password });
+      
+      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Hubo un error al crear la cuenta. Verifica que el correo no exista.');
+    }
   };
 
   return (
@@ -29,6 +43,15 @@ const Register = () => {
           <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Crear una Cuenta</h1>
           <p className="text-gray-400 text-sm">Únete a GestGan para administrar tu granja</p>
         </div>
+
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm p-3 rounded-lg mb-6 flex items-center gap-3 animate-fade-up">
+            <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{error}</span>
+          </div>
+        )}
 
         <form onSubmit={handleRegister} className="space-y-5">
           <div>

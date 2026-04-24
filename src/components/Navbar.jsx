@@ -1,6 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/login');
+  };
   return (
     <header className="h-16 border-b border-dark-600 bg-dark-900/80 backdrop-blur-md sticky top-0 z-10 flex items-center justify-between px-8">
       {/* Title Breadcrumbs area */}
@@ -32,15 +48,37 @@ const Navbar = () => {
           <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 border-2 border-dark-900 rounded-full animate-pulse"></span>
         </button>
 
-        {/* Profile */}
-        <div className="flex items-center gap-3 border-l border-dark-600 pl-6">
-          <div className="text-right hidden md:block">
-            <p className="text-sm font-medium text-gray-100 leading-tight">Admin User</p>
-            <p className="text-xs text-gray-500">Administrador</p>
-          </div>
-          <div className="w-9 h-9 rounded-full bg-brand-900 border border-brand-600 flex items-center justify-center text-brand-300 font-bold overflow-hidden shadow-lg shadow-brand-500/20">
-            AU
-          </div>
+        {/* Profile / Auth actions */}
+        <div className="flex items-center gap-4 border-l border-dark-600 pl-6">
+          {user ? (
+            <>
+              <div className="text-right hidden md:block">
+                <p className="text-sm font-medium text-gray-100 leading-tight">{user.name}</p>
+                <p className="text-xs text-gray-500">{user.email}</p>
+              </div>
+              <div className="w-9 h-9 rounded-full bg-brand-900 border border-brand-600 flex items-center justify-center text-brand-300 font-bold overflow-hidden shadow-lg shadow-brand-500/20 uppercase">
+                {user.name ? user.name.charAt(0) : 'U'}
+              </div>
+              <button 
+                onClick={handleLogout}
+                className="ml-2 text-sm text-red-400 hover:text-red-300 transition-colors flex items-center"
+                title="Cerrar Sesión"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                Iniciar Sesión
+              </Link>
+              <Link to="/register" className="btn-primary py-1.5 px-3 text-xs">
+                Registrarse
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

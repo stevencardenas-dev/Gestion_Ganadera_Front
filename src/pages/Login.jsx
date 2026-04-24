@@ -1,15 +1,31 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import authService from '../services/authService';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Simulate JWT authentication success
-    navigate('/');
+    setError(''); // Clear previous errors
+
+    if (!recaptchaToken) {
+      setError('Por favor, completa la verificación "No soy un robot"');
+      return;
+    }
+
+    try {
+      // Usar servicio real
+      await authService.login({ email, password, recaptchaToken });
+      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Credenciales no coinciden o hubo un problema al conectar');
+    }
   };
 
   return (
@@ -28,6 +44,15 @@ const Login = () => {
           <h1 className="text-2xl font-bold text-white mb-2 tracking-tight">Bienvenido a GestGan</h1>
           <p className="text-gray-400 text-sm">Inicia sesión para gestionar tu ganadería</p>
         </div>
+
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm p-3 rounded-lg mb-6 flex items-center gap-3 animate-fade-up">
+            <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>{error}</span>
+          </div>
+        )}
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
@@ -54,6 +79,14 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+            />
+          </div>
+
+          <div className="flex justify-center my-4 overflow-hidden rounded-lg">
+            <ReCAPTCHA
+              sitekey="6LetSccsAAAAAPkl-C59NObpr0bpc-joWl2ysV-Y"
+              onChange={(token) => setRecaptchaToken(token)}
+              theme="dark"
             />
           </div>
 
