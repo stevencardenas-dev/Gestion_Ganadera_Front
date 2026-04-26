@@ -4,17 +4,21 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Home from './pages/Home';
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        
         {/* Auth Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
         {/* Protected Application Routes */}
-        <Route path="/" element={<Layout />}>
+        <Route path="/dashboard" element={<Layout />}>
           <Route index element={<Dashboard />} />
           {/* Other routes will be added here */}
           <Route path="ganado" element={<div className="p-8"><h1 className="text-2xl font-bold">Ganado</h1></div>} />

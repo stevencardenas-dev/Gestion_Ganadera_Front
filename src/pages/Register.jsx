@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -9,6 +10,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -19,14 +21,19 @@ const Register = () => {
       return;
     }
     
+    if (!recaptchaToken) {
+      setError('Por favor, completa la verificación "No soy un robot"');
+      return;
+    }
+    
     try {
       // Llamada real a registro (el backend espera 'nombre')
       await authService.register({ nombre: name, email, password });
       
       // Auto login después del registro
-      await authService.login({ email, password });
+      await authService.login({ email, password, recaptchaToken });
       
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Hubo un error al crear la cuenta. Verifica que el correo no exista.');
     }
@@ -99,6 +106,14 @@ const Register = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+            />
+          </div>
+
+          <div className="flex justify-center my-4 overflow-hidden rounded-lg">
+            <ReCAPTCHA
+              sitekey="6LetSccsAAAAAPkl-C59NObpr0bpc-joWl2ysV-Y"
+              onChange={(token) => setRecaptchaToken(token)}
+              theme="dark"
             />
           </div>
 

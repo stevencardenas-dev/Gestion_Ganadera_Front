@@ -22,7 +22,7 @@ const Login = () => {
     try {
       // Usar servicio real
       await authService.login({ email, password, recaptchaToken });
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Credenciales no coinciden o hubo un problema al conectar');
     }
