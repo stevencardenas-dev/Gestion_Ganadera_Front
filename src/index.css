@@ -58,8 +58,12 @@
     @apply bg-dark-500 text-gray-100;
   }
   .nav-item.active {
-    @apply bg-brand-700 text-brand-200;
+    @apply bg-brand-700 text-brand-200 relative overflow-hidden;
     box-shadow: 0 0 16px rgba(45,156,45,0.25);
+  }
+  .nav-item.active::before {
+    content: '';
+    @apply absolute left-0 top-1.5 bottom-1.5 w-1.5 bg-green-400 rounded-r-md;
   }
 
   /* Button primary */

@@ -6,6 +6,11 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
 
+// Ganado Module
+import GanadoList from './pages/Ganado/GanadoList';
+import GanadoForm from './pages/Ganado/GanadoForm';
+import GanadoDetail from './pages/Ganado/GanadoDetail';
+
 function App() {
   return (
     <Router>
@@ -20,8 +25,13 @@ function App() {
         {/* Protected Application Routes */}
         <Route path="/dashboard" element={<Layout />}>
           <Route index element={<Dashboard />} />
-          {/* Other routes will be added here */}
-          <Route path="ganado" element={<div className="p-8"><h1 className="text-2xl font-bold">Ganado</h1></div>} />
+          
+          {/* Ganado Module */}
+          <Route path="ganado" element={<GanadoList />} />
+          <Route path="ganado/nuevo" element={<GanadoForm />} />
+          <Route path="ganado/editar/:id" element={<GanadoForm />} />
+          <Route path="ganado/:id" element={<GanadoDetail />} />
+
           <Route path="fincas" element={<div className="p-8"><h1 className="text-2xl font-bold">Fincas y Lotes</h1></div>} />
           <Route path="reproduccion" element={<div className="p-8"><h1 className="text-2xl font-bold">Reproducción</h1></div>} />
           <Route path="sanidad" element={<div className="p-8"><h1 className="text-2xl font-bold">Sanidad</h1></div>} />
