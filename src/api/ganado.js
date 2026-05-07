@@ -41,13 +41,18 @@ export const getRazas = async () => {
   return res.data;
 };
 
+export const createRaza = async (data) => {
+  const res = await axios.post(`${API_URL}/razas`, data, getHeaders());
+  return res.data;
+};
+
 export const getCategorias = async () => {
   const res = await axios.get(`${API_URL}/categorias`, getHeaders());
   return res.data;
 };
 
-export const getEspecies = async () => {
-  const res = await axios.get(`${API_URL}/especies`, getHeaders());
+export const createCategoria = async (data) => {
+  const res = await axios.post(`${API_URL}/categorias`, data, getHeaders());
   return res.data;
 };
 
@@ -56,8 +61,18 @@ export const getLotes = async () => {
   return res.data;
 };
 
+export const createLote = async (data) => {
+  const res = await axios.post(`${API_URL}/lotes`, data, getHeaders());
+  return res.data;
+};
+
 export const getFincas = async () => {
   const res = await axios.get(`${API_URL}/fincas`, getHeaders());
+  return res.data;
+};
+
+export const createFinca = async (data) => {
+  const res = await axios.post(`${API_URL}/fincas`, data, getHeaders());
   return res.data;
 };
 

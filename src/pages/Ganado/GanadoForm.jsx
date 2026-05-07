@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getAnimales, getAnimalById, createAnimal, updateAnimal, getEspecies, getRazas, getCategorias, getLotes, getFincas } from '../../api/ganado';
+import { getAnimales, getAnimalById, createAnimal, updateAnimal, getRazas, getCategorias, getLotes, getFincas } from '../../api/ganado';
+import CatalogModal from '../../components/CatalogModal';
 
 const GanadoForm = () => {
   const { id } = useParams();
@@ -10,13 +11,12 @@ const GanadoForm = () => {
   const [formData, setFormData] = useState({
     identificadorArete: '',
     nombre: '',
-    sexo: 'HEMBRA',
+    sexo: 'Hembra',
     fechaNacimiento: '',
     pesoNacimiento: '',
     pesoActual: '',
-    estado: 'ACTIVO',
+    estado: 'Activo',
     fotoUrl: '',
-    especie: { id: '' },
     raza: { id: '' },
     categoria: { id: '' },
     lote: { id: '' },
@@ -26,23 +26,47 @@ const GanadoForm = () => {
   });
 
   const [catalogs, setCatalogs] = useState({
-    especies: [], razas: [], categorias: [], lotes: [], fincas: [], madres: [], padres: []
+    razas: [], categorias: [], lotes: [], fincas: [], madres: [], padres: []
   });
+
+  const [modalType, setModalType] = useState(null);
+
+  const openModal = (type) => setModalType(type);
+  const closeModal = () => setModalType(null);
+
+  const handleSaveCatalogItem = (type, newItem) => {
+    if (type === 'Raza') {
+      setCatalogs(prev => ({ ...prev, razas: [...prev.razas, newItem] }));
+      setFormData(prev => ({ ...prev, raza: { id: newItem.id } }));
+    } else if (type === 'Categoria') {
+      setCatalogs(prev => ({ ...prev, categorias: [...prev.categorias, newItem] }));
+      setFormData(prev => ({ ...prev, categoria: { id: newItem.id } }));
+    } else if (type === 'Finca') {
+      setCatalogs(prev => ({ ...prev, fincas: [...prev.fincas, newItem] }));
+      setFormData(prev => ({ ...prev, finca: { id: newItem.id } }));
+    } else if (type === 'Lote') {
+      setCatalogs(prev => ({ ...prev, lotes: [...prev.lotes, newItem] }));
+      setFormData(prev => ({ ...prev, lote: { id: newItem.id } }));
+    }
+  };
 
   useEffect(() => {
     const loadCatalogs = async () => {
       try {
-        const [espRes, razRes, catRes, lotRes, finRes, aniRes] = await Promise.all([
-          getEspecies(), getRazas(), getCategorias(), getLotes(), getFincas(), getAnimales()
+        const [razRes, catRes, lotRes, finRes, aniRes] = await Promise.all([
+          getRazas().catch(() => []),
+          getCategorias().catch(() => []),
+          getLotes().catch(() => []),
+          getFincas().catch(() => []),
+          getAnimales().catch(() => [])
         ]);
         setCatalogs({
-          especies: espRes,
           razas: razRes,
           categorias: catRes,
           lotes: lotRes,
           fincas: finRes,
-          madres: aniRes.filter(a => a.sexo === 'HEMBRA' && a.id !== parseInt(id)),
-          padres: aniRes.filter(a => a.sexo === 'MACHO' && a.id !== parseInt(id))
+          madres: aniRes.filter(a => a.sexo === 'Hembra' && a.id !== parseInt(id)),
+          padres: aniRes.filter(a => a.sexo === 'Macho' && a.id !== parseInt(id))
         });
       } catch (error) {
         console.error('Error cargando catálogos', error);
@@ -52,18 +76,10 @@ const GanadoForm = () => {
 
     if (isEditing) {
       getAnimalById(id).then(data => {
-        // Formatear datos para el estado local, adaptando las referencias
         setFormData({
           ...data,
           fechaNacimiento: data.fechaNacimiento ? data.fechaNacimiento.split('T')[0] : '',
-          especie: data.especieNombre ? catalogs.especies.find(e => e.nombre === data.especieNombre) || {id:''} : {id:''},
           raza: data.razaNombre ? catalogs.razas.find(r => r.nombre === data.razaNombre) || {id:''} : {id:''},
-          // Este enfoque simplificado asume DTO. Para editar correctamente necesitamos los IDs. 
-          // Espera, el AnimalDTO no trae especieId, razaId, solo Nombre. 
-          // Pero el backend de getAnimalById devuelve AnimalDTO, y hemos agregado madreId, padreId.
-          // Para una implementación ideal, getAnimalById debería devolver el Entity o un DTO detallado.
-          // Como el backend mapea desde la entidad, si le enviamos el objeto parcial puede fallar.
-          // Vamos a mapear los IDs recibidos en el DTO si existen:
           madre: { id: data.madreId || '' },
           padre: { id: data.padreId || '' }
         });
@@ -73,8 +89,7 @@ const GanadoForm = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Manejar campos anidados
-    if (['especie', 'raza', 'categoria', 'lote', 'finca', 'madre', 'padre'].includes(name)) {
+    if (['raza', 'categoria', 'lote', 'finca', 'madre', 'padre'].includes(name)) {
       setFormData({ ...formData, [name]: value ? { id: parseInt(value) } : null });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -84,13 +99,14 @@ const GanadoForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Limpiar nulos para el payload
       const payload = { ...formData };
-      ['especie', 'raza', 'categoria', 'lote', 'finca', 'madre', 'padre'].forEach(field => {
+      ['raza', 'categoria', 'lote', 'finca', 'madre', 'padre'].forEach(field => {
         if (payload[field] && !payload[field].id) {
           payload[field] = null;
         }
       });
+      if (payload.fechaNacimiento === '') payload.fechaNacimiento = null;
+      if (payload.pesoActual === '') payload.pesoActual = null;
 
       if (isEditing) {
         await updateAnimal(id, payload);
@@ -100,7 +116,8 @@ const GanadoForm = () => {
       navigate('/dashboard/ganado');
     } catch (error) {
       console.error('Error guardando', error);
-      alert('Ocurrió un error al guardar');
+      const msg = error.response?.data?.message || error.response?.data?.error || 'Error desconocido';
+      alert('Error al guardar: ' + msg);
     }
   };
 
@@ -125,8 +142,8 @@ const GanadoForm = () => {
           <div>
             <label className="block text-sm text-gray-400 mb-1">Sexo</label>
             <select name="sexo" value={formData.sexo} onChange={handleChange} className="input-field">
-              <option value="HEMBRA">Hembra</option>
-              <option value="MACHO">Macho</option>
+              <option value="Hembra">Hembra</option>
+              <option value="Macho">Macho</option>
             </select>
           </div>
           <div>
@@ -140,9 +157,12 @@ const GanadoForm = () => {
           <div>
             <label className="block text-sm text-gray-400 mb-1">Estado</label>
             <select name="estado" value={formData.estado} onChange={handleChange} className="input-field">
-              <option value="ACTIVO">Activo</option>
-              <option value="VENDIDO">Vendido</option>
-              <option value="FALLECIDO">Fallecido</option>
+              <option value="Activo">Activo</option>
+              <option value="En tratamiento">En tratamiento</option>
+              <option value="En cuarentena">En cuarentena</option>
+              <option value="Vendido">Vendido</option>
+              <option value="Fallecido">Fallecido</option>
+              <option value="Sacrificado">Sacrificado</option>
             </select>
           </div>
         </div>
@@ -150,39 +170,44 @@ const GanadoForm = () => {
         <h2 className="text-lg font-semibold border-b border-dark-600 pb-2 pt-4">Clasificación y Ubicación</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Especie</label>
-            <select name="especie" value={formData.especie?.id || ''} onChange={handleChange} className="input-field">
-              <option value="">Seleccione...</option>
-              {catalogs.especies.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
-          </div>
-          <div>
             <label className="block text-sm text-gray-400 mb-1">Raza</label>
-            <select name="raza" value={formData.raza?.id || ''} onChange={handleChange} className="input-field">
-              <option value="">Seleccione...</option>
-              {catalogs.razas.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
+            <div className="flex items-center gap-2">
+              <select name="raza" value={formData.raza?.id || ''} onChange={handleChange} className="input-field flex-1">
+                <option value="">Seleccione...</option>
+                {catalogs.razas.map(c => <option key={c.id} value={c.id}>{c.nombre || `(Raza ID ${c.id} sin nombre)`}</option>)}
+              </select>
+              <button type="button" onClick={() => openModal('Raza')} className="btn-primary px-3 py-2 leading-none text-lg">+</button>
+            </div>
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Categoría</label>
-            <select name="categoria" value={formData.categoria?.id || ''} onChange={handleChange} className="input-field">
-              <option value="">Seleccione...</option>
-              {catalogs.categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
+            <div className="flex items-center gap-2">
+              <select name="categoria" value={formData.categoria?.id || ''} onChange={handleChange} className="input-field flex-1">
+                <option value="">Seleccione...</option>
+                {catalogs.categorias.map(c => <option key={c.id} value={c.id}>{c.nombre || `(Categoría ID ${c.id} sin nombre)`}</option>)}
+              </select>
+              <button type="button" onClick={() => openModal('Categoria')} className="btn-primary px-3 py-2 leading-none text-lg">+</button>
+            </div>
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Finca</label>
-            <select name="finca" value={formData.finca?.id || ''} onChange={handleChange} className="input-field">
-              <option value="">Seleccione...</option>
-              {catalogs.fincas.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
+            <div className="flex items-center gap-2">
+              <select name="finca" value={formData.finca?.id || ''} onChange={handleChange} className="input-field flex-1">
+                <option value="">Seleccione...</option>
+                {catalogs.fincas.map(c => <option key={c.id} value={c.id}>{c.nombre || `(Finca ID ${c.id} sin nombre)`}</option>)}
+              </select>
+              <button type="button" onClick={() => openModal('Finca')} className="btn-primary px-3 py-2 leading-none text-lg">+</button>
+            </div>
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Lote</label>
-            <select name="lote" value={formData.lote?.id || ''} onChange={handleChange} className="input-field">
-              <option value="">Seleccione...</option>
-              {catalogs.lotes.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-            </select>
+            <div className="flex items-center gap-2">
+              <select name="lote" value={formData.lote?.id || ''} onChange={handleChange} className="input-field flex-1">
+                <option value="">Seleccione...</option>
+                {catalogs.lotes.map(c => <option key={c.id} value={c.id}>{c.nombre || `(Lote ID ${c.id} sin nombre)`}</option>)}
+              </select>
+              <button type="button" onClick={() => openModal('Lote')} className="btn-primary px-3 py-2 leading-none text-lg">+</button>
+            </div>
           </div>
         </div>
 
@@ -191,14 +216,14 @@ const GanadoForm = () => {
           <div>
             <label className="block text-sm text-gray-400 mb-1">Madre</label>
             <select name="madre" value={formData.madre?.id || ''} onChange={handleChange} className="input-field">
-              <option value="">Desconocida / Ninguna</option>
+              <option value="">Desconocido</option>
               {catalogs.madres.map(c => <option key={c.id} value={c.id}>{c.identificadorArete || `ID:${c.id}`} {c.nombre ? `(${c.nombre})` : ''}</option>)}
             </select>
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Padre</label>
             <select name="padre" value={formData.padre?.id || ''} onChange={handleChange} className="input-field">
-              <option value="">Desconocido / Ninguno</option>
+              <option value="">Desconocido</option>
               {catalogs.padres.map(c => <option key={c.id} value={c.id}>{c.identificadorArete || `ID:${c.id}`} {c.nombre ? `(${c.nombre})` : ''}</option>)}
             </select>
           </div>
@@ -209,6 +234,14 @@ const GanadoForm = () => {
           <button type="submit" className="btn-primary">Guardar Animal</button>
         </div>
       </form>
+
+      <CatalogModal 
+        isOpen={!!modalType}
+        onClose={closeModal}
+        type={modalType}
+        onSave={handleSaveCatalogItem}
+        fincas={catalogs.fincas}
+      />
     </div>
   );
 };
