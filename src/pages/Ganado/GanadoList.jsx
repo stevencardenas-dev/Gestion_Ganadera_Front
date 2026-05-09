@@ -32,7 +32,7 @@ const GanadoList = () => {
   useEffect(() => {
     let result = animales;
     if (filtros.busqueda) {
-      result = result.filter(a => 
+      result = result.filter(a =>
         (a.identificadorArete && a.identificadorArete.toLowerCase().includes(filtros.busqueda.toLowerCase())) ||
         (a.nombre && a.nombre.toLowerCase().includes(filtros.busqueda.toLowerCase()))
       );
@@ -75,37 +75,37 @@ const GanadoList = () => {
       <div className="glass-card p-4 flex gap-4 flex-wrap items-end">
         <div className="flex-1 min-w-[200px]">
           <label className="block text-xs text-gray-400 mb-1">Buscar (ID, Arete, Nombre)</label>
-          <input 
-            type="text" 
-            className="input-field" 
+          <input
+            type="text"
+            className="input-field"
             placeholder="Buscar..."
             value={filtros.busqueda}
-            onChange={(e) => setFiltros({...filtros, busqueda: e.target.value})}
+            onChange={(e) => setFiltros({ ...filtros, busqueda: e.target.value })}
           />
         </div>
         <div className="w-48">
           <label className="block text-xs text-gray-400 mb-1">Estado</label>
-          <select 
+          <select
             className="input-field"
             value={filtros.estado}
-            onChange={(e) => setFiltros({...filtros, estado: e.target.value})}
+            onChange={(e) => setFiltros({ ...filtros, estado: e.target.value })}
           >
             <option value="">Todos</option>
-            <option value="ACTIVO">Activo</option>
-            <option value="VENDIDO">Vendido</option>
-            <option value="FALLECIDO">Fallecido</option>
+            <option value="Activo">Activo</option>
+            <option value="Vendido">Vendido</option>
+            <option value="Fallecido">Fallecido</option>
           </select>
         </div>
         <div className="w-48">
           <label className="block text-xs text-gray-400 mb-1">Sexo</label>
-          <select 
+          <select
             className="input-field"
             value={filtros.sexo}
-            onChange={(e) => setFiltros({...filtros, sexo: e.target.value})}
+            onChange={(e) => setFiltros({ ...filtros, sexo: e.target.value })}
           >
             <option value="">Todos</option>
-            <option value="MACHO">Macho</option>
-            <option value="HEMBRA">Hembra</option>
+            <option value="Macho">Macho</option>
+            <option value="Hembra">Hembra</option>
           </select>
         </div>
       </div>
@@ -115,31 +115,32 @@ const GanadoList = () => {
           <table className="w-full data-table">
             <thead>
               <tr className="bg-dark-800/50">
-                <th>Arete / ID</th>
-                <th>Nombre</th>
-                <th>Sexo</th>
-                <th>Raza</th>
-                <th>Categoría</th>
-                <th>Estado</th>
-                <th className="text-right">Acciones</th>
+                <th className="text-left">Arete / ID</th>
+                <th className="text-left">Nombre</th>
+                <th className="text-left" style={{ paddingLeft: '19px' }}>Sexo</th>
+                <th className="text-left">Raza</th>
+                <th className="text-left">Categoría</th>
+                <th className="text-left">Estado</th>
+                <th className="text-left" style={{ paddingLeft: '53px' }}>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {filteredAnimales.map(animal => (
                 <tr key={animal.id}>
                   <td>
+
                     <div className="font-medium text-brand-300">{animal.identificadorArete || `ID:${animal.id}`}</div>
                   </td>
                   <td>{animal.nombre || '-'}</td>
                   <td>
-                    {animal.sexo === 'HEMBRA' ? <span className="badge-pink badge">Hembra</span> : 
-                     animal.sexo === 'MACHO' ? <span className="badge-blue badge">Macho</span> : '-'}
+                    {animal.sexo === 'Hembra' ? <span className="badge-pink badge">Hembra</span> :
+                      animal.sexo === 'Macho' ? <span className="badge-blue badge">Macho</span> : '-'}
                   </td>
                   <td>{animal.razaNombre || '-'}</td>
                   <td>{animal.categoriaNombre || '-'}</td>
                   <td>
-                    {animal.estado === 'ACTIVO' ? <span className="badge-green">{animal.estado}</span> :
-                     <span className="badge-gray">{animal.estado || 'N/A'}</span>}
+                    {animal.estado === 'Activo' ? <span className="badge-green">{animal.estado}</span> :
+                      <span className="badge-gray">{animal.estado || 'N/A'}</span>}
                   </td>
                   <td className="text-right space-x-2">
                     <Link to={`/dashboard/ganado/${animal.id}`} className="text-sm text-brand-400 hover:underline">Ver Ficha</Link>

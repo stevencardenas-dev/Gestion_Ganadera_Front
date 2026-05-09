@@ -79,7 +79,7 @@ const GanadoForm = () => {
         setFormData({
           ...data,
           fechaNacimiento: data.fechaNacimiento ? data.fechaNacimiento.split('T')[0] : '',
-          raza: data.razaNombre ? catalogs.razas.find(r => r.nombre === data.razaNombre) || {id:''} : {id:''},
+          raza: data.razaNombre ? catalogs.razas.find(r => r.nombre === data.razaNombre) || { id: '' } : { id: '' },
           madre: { id: data.madreId || '' },
           padre: { id: data.padreId || '' }
         });
@@ -235,7 +235,7 @@ const GanadoForm = () => {
         </div>
       </form>
 
-      <CatalogModal 
+      <CatalogModal
         isOpen={!!modalType}
         onClose={closeModal}
         type={modalType}
