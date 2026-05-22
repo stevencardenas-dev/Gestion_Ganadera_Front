@@ -15,7 +15,7 @@ const Login = () => {
     setError(''); // Clear previous errors
 
     if (!recaptchaToken) {
-      setError('Por favor, completa la verificación "No soy un robot"');
+      setError('Por favor completa el ReCAPTCHA');
       return;
     }
 
