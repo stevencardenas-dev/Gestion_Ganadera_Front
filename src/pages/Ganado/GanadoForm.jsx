@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAnimales, getAnimalById, createAnimal, updateAnimal, getRazas, getCategorias, getLotes, getFincas } from '../../api/ganado';
 import CatalogModal from '../../components/CatalogModal';
+import CustomSelect from '../../components/CustomSelect';
 
 const GanadoForm = () => {
   const { id } = useParams();
@@ -141,10 +142,15 @@ const GanadoForm = () => {
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Sexo</label>
-            <select name="sexo" value={formData.sexo} onChange={handleChange} className="input-field">
-              <option value="Hembra">Hembra</option>
-              <option value="Macho">Macho</option>
-            </select>
+            <CustomSelect
+              name="sexo"
+              value={formData.sexo}
+              onChange={handleChange}
+              options={[
+                { value: 'Hembra', label: 'Hembra' },
+                { value: 'Macho', label: 'Macho' }
+              ]}
+            />
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Fecha de Nacimiento</label>
@@ -156,14 +162,19 @@ const GanadoForm = () => {
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Estado</label>
-            <select name="estado" value={formData.estado} onChange={handleChange} className="input-field">
-              <option value="Activo">Activo</option>
-              <option value="En tratamiento">En tratamiento</option>
-              <option value="En cuarentena">En cuarentena</option>
-              <option value="Vendido">Vendido</option>
-              <option value="Fallecido">Fallecido</option>
-              <option value="Sacrificado">Sacrificado</option>
-            </select>
+            <CustomSelect
+              name="estado"
+              value={formData.estado}
+              onChange={handleChange}
+              options={[
+                { value: 'Activo', label: 'Activo' },
+                { value: 'En tratamiento', label: 'En tratamiento' },
+                { value: 'En cuarentena', label: 'En cuarentena' },
+                { value: 'Vendido', label: 'Vendido' },
+                { value: 'Fallecido', label: 'Fallecido' },
+                { value: 'Sacrificado', label: 'Sacrificado' }
+              ]}
+            />
           </div>
         </div>
 
@@ -172,41 +183,69 @@ const GanadoForm = () => {
           <div>
             <label className="block text-sm text-gray-400 mb-1">Raza</label>
             <div className="flex items-center gap-2">
-              <select name="raza" value={formData.raza?.id || ''} onChange={handleChange} className="input-field flex-1">
-                <option value="">Seleccione...</option>
-                {catalogs.razas.map(c => <option key={c.id} value={c.id}>{c.nombre || `(Raza ID ${c.id} sin nombre)`}</option>)}
-              </select>
-              <button type="button" onClick={() => openModal('Raza')} className="btn-primary px-3 py-2 leading-none text-lg">+</button>
+              <CustomSelect
+                name="raza"
+                value={formData.raza?.id || ''}
+                onChange={handleChange}
+                placeholder="Seleccione Raza..."
+                className="flex-1"
+                options={[
+                  { value: '', label: 'Seleccione...' },
+                  ...catalogs.razas.map(c => ({ value: c.id, label: c.nombre || `(Raza ID ${c.id} sin nombre)` }))
+                ]}
+              />
+              <button type="button" onClick={() => openModal('Raza')} className="btn-primary h-[42px] w-[42px] p-0 flex items-center justify-center text-lg leading-none">+</button>
             </div>
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Categoría</label>
             <div className="flex items-center gap-2">
-              <select name="categoria" value={formData.categoria?.id || ''} onChange={handleChange} className="input-field flex-1">
-                <option value="">Seleccione...</option>
-                {catalogs.categorias.map(c => <option key={c.id} value={c.id}>{c.nombre || `(Categoría ID ${c.id} sin nombre)`}</option>)}
-              </select>
-              <button type="button" onClick={() => openModal('Categoria')} className="btn-primary px-3 py-2 leading-none text-lg">+</button>
+              <CustomSelect
+                name="categoria"
+                value={formData.categoria?.id || ''}
+                onChange={handleChange}
+                placeholder="Seleccione Categoría..."
+                className="flex-1"
+                options={[
+                  { value: '', label: 'Seleccione...' },
+                  ...catalogs.categorias.map(c => ({ value: c.id, label: c.nombre || `(Categoría ID ${c.id} sin nombre)` }))
+                ]}
+              />
+              <button type="button" onClick={() => openModal('Categoria')} className="btn-primary h-[42px] w-[42px] p-0 flex items-center justify-center text-lg leading-none">+</button>
             </div>
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Finca</label>
             <div className="flex items-center gap-2">
-              <select name="finca" value={formData.finca?.id || ''} onChange={handleChange} className="input-field flex-1">
-                <option value="">Seleccione...</option>
-                {catalogs.fincas.map(c => <option key={c.id} value={c.id}>{c.nombre || `(Finca ID ${c.id} sin nombre)`}</option>)}
-              </select>
-              <button type="button" onClick={() => openModal('Finca')} className="btn-primary px-3 py-2 leading-none text-lg">+</button>
+              <CustomSelect
+                name="finca"
+                value={formData.finca?.id || ''}
+                onChange={handleChange}
+                placeholder="Seleccione Finca..."
+                className="flex-1"
+                options={[
+                  { value: '', label: 'Seleccione...' },
+                  ...catalogs.fincas.map(c => ({ value: c.id, label: c.nombre || `(Finca ID ${c.id} sin nombre)` }))
+                ]}
+              />
+              <button type="button" onClick={() => openModal('Finca')} className="btn-primary h-[42px] w-[42px] p-0 flex items-center justify-center text-lg leading-none">+</button>
             </div>
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Lote</label>
             <div className="flex items-center gap-2">
-              <select name="lote" value={formData.lote?.id || ''} onChange={handleChange} className="input-field flex-1">
-                <option value="">Seleccione...</option>
-                {catalogs.lotes.map(c => <option key={c.id} value={c.id}>{c.nombre || `(Lote ID ${c.id} sin nombre)`}</option>)}
-              </select>
-              <button type="button" onClick={() => openModal('Lote')} className="btn-primary px-3 py-2 leading-none text-lg">+</button>
+              <CustomSelect
+                name="lote"
+                value={formData.lote?.id || ''}
+                onChange={handleChange}
+                placeholder="Seleccione Lote..."
+                className="flex-1"
+                options={[
+                  { value: '', label: 'Seleccione...' },
+                  ...catalogs.lotes.map(c => ({ value: c.id, label: c.nombre || `(Lote ID ${c.id} sin nombre)` }))
+                ]}
+              />
+              <button type="button" onClick={() => openModal('Lote')} className="btn-primary h-[42px] w-[42px] p-0 flex items-center justify-center text-lg leading-none">+</button>
             </div>
           </div>
         </div>
@@ -215,17 +254,29 @@ const GanadoForm = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm text-gray-400 mb-1">Madre</label>
-            <select name="madre" value={formData.madre?.id || ''} onChange={handleChange} className="input-field">
-              <option value="">Desconocido</option>
-              {catalogs.madres.map(c => <option key={c.id} value={c.id}>{c.identificadorArete || `ID:${c.id}`} {c.nombre ? `(${c.nombre})` : ''}</option>)}
-            </select>
+            <CustomSelect
+              name="madre"
+              value={formData.madre?.id || ''}
+              onChange={handleChange}
+              placeholder="Seleccione Madre..."
+              options={[
+                { value: '', label: 'Desconocido' },
+                ...catalogs.madres.map(c => ({ value: c.id, label: `${c.identificadorArete || `ID:${c.id}`} ${c.nombre ? `(${c.nombre})` : ''}` }))
+              ]}
+            />
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Padre</label>
-            <select name="padre" value={formData.padre?.id || ''} onChange={handleChange} className="input-field">
-              <option value="">Desconocido</option>
-              {catalogs.padres.map(c => <option key={c.id} value={c.id}>{c.identificadorArete || `ID:${c.id}`} {c.nombre ? `(${c.nombre})` : ''}</option>)}
-            </select>
+            <CustomSelect
+              name="padre"
+              value={formData.padre?.id || ''}
+              onChange={handleChange}
+              placeholder="Seleccione Padre..."
+              options={[
+                { value: '', label: 'Desconocido' },
+                ...catalogs.padres.map(c => ({ value: c.id, label: `${c.identificadorArete || `ID:${c.id}`} ${c.nombre ? `(${c.nombre})` : ''}` }))
+              ]}
+            />
           </div>
         </div>
 
