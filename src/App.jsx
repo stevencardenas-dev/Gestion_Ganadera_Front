@@ -11,6 +11,18 @@ import GanadoList from './pages/Ganado/GanadoList';
 import GanadoForm from './pages/Ganado/GanadoForm';
 import GanadoDetail from './pages/Ganado/GanadoDetail';
 
+// Movimientos Module
+import MovimientosList from './pages/Movimientos/MovimientosList';
+import MovimientoForm from './pages/Movimientos/MovimientoForm';
+
+// Reproducción Module
+import ReproduccionList from './pages/Reproduccion/ReproduccionList';
+import ReproduccionForm from './pages/Reproduccion/ReproduccionForm';
+
+// Producción Module
+import ProduccionList from './pages/Produccion/ProduccionList';
+import ProduccionForm from './pages/Produccion/ProduccionForm';
+
 function App() {
   return (
     <Router>
@@ -33,10 +45,16 @@ function App() {
           <Route path="ganado/:id" element={<GanadoDetail />} />
 
           <Route path="fincas" element={<div className="p-8"><h1 className="text-2xl font-bold">Fincas y Lotes</h1></div>} />
-          <Route path="reproduccion" element={<div className="p-8"><h1 className="text-2xl font-bold">Reproducción</h1></div>} />
+          <Route path="reproduccion" element={<ReproduccionList />} />
+          <Route path="reproduccion/nuevo" element={<ReproduccionForm />} />
+          <Route path="reproduccion/editar/:id" element={<ReproduccionForm />} />
           <Route path="sanidad" element={<div className="p-8"><h1 className="text-2xl font-bold">Sanidad</h1></div>} />
-          <Route path="produccion" element={<div className="p-8"><h1 className="text-2xl font-bold">Producción</h1></div>} />
-          <Route path="movimientos" element={<div className="p-8"><h1 className="text-2xl font-bold">Movimientos</h1></div>} />
+          <Route path="produccion" element={<ProduccionList />} />
+          <Route path="produccion/nuevo" element={<ProduccionForm />} />
+          <Route path="produccion/editar/:id" element={<ProduccionForm />} />
+          {/* Movimientos Module */}
+          <Route path="movimientos" element={<MovimientosList />} />
+          <Route path="movimientos/nuevo" element={<MovimientoForm />} />
           <Route path="reportes" element={<div className="p-8"><h1 className="text-2xl font-bold">Reportes</h1></div>} />
           <Route path="configuracion" element={<div className="p-8"><h1 className="text-2xl font-bold">Configuración</h1></div>} />
         </Route>

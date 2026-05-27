@@ -3,7 +3,12 @@ import api from './api';
 const authService = {
   // Register
   register: async (userData) => {
-    const response = await api.post('/api/auth/register', userData);
+    const response = await api.post('/api/auth/register', {
+      nombre: userData.nombre,
+      email: userData.email,
+      password: userData.password,
+      recaptchaToken: userData.recaptchaToken
+    });
     return response.data;
   },
 

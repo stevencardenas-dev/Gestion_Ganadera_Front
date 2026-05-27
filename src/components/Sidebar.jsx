@@ -5,6 +5,7 @@ const Sidebar = () => {
   const menuItems = [
     { name: 'Dashboard', path: '/dashboard', icon: 'home' },
     { name: 'Ganado', path: '/dashboard/ganado', icon: 'cow' },
+    { name: 'Movimientos', path: '/dashboard/movimientos', icon: 'operations' },
     { name: 'Operaciones', path: '/dashboard/operaciones', icon: 'operations' },
     { name: 'Sanidad', path: '/dashboard/sanidad', icon: 'medkit' },
     { name: 'Reproducción', path: '/dashboard/reproduccion', icon: 'heart' },

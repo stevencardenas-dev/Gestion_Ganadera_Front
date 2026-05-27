@@ -27,11 +27,10 @@ const Register = () => {
     }
     
     try {
-      // Llamada real a registro (el backend espera 'nombre')
-      await authService.register({ nombre: name, email, password });
+      await authService.register({ nombre: name, email, password, recaptchaToken });
       
-      // Auto login después del registro
-      await authService.login({ email, password, recaptchaToken });
+      // Auto login después del registro (solo email/password, reCAPTCHA token es de un solo uso)
+      await authService.login({ email, password });
       
       navigate('/dashboard');
     } catch (err) {
